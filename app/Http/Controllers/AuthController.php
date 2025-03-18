@@ -17,15 +17,21 @@ class AuthController extends Controller
 
     // Proses login
     public function login(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
 
-        if (Auth::attempt($credentials)) {
-            return redirect()->intended('/dashboard')->with('success', 'Login berhasil!');
-        }
+    $user = User::where('email', $request->email)->first();
 
-        return back()->with('error', 'Email atau password salah.');
+    if (!$user || !Hash::check($request->password, $user->password)) {
+        return response()->json(['message' => 'Invalid credentials'], 401);
     }
+
+    $token = $user->createToken('auth_token')->plainTextToken;
+    return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
+}
 
     // Menampilkan form registrasi
     public function showRegistrationForm()
@@ -59,17 +65,14 @@ class AuthController extends Controller
 
     public function showDashboard()
     {
-        $user = Auth::user(); // Mengambil data pengguna yang sedang login
+        $user = Auth::user();
         return view('dashboard', compact('user'));
     }
 
     // Proses logout
     public function logout(Request $request)
-    {
-        Auth::logout(); // Logout pengguna
-        $request->session()->invalidate(); // Menghapus sesi
-        $request->session()->regenerateToken(); // Regenerasi token CSRF
-
-        return redirect('/login')->with('success', 'Anda berhasil logout.');
-    }
+{
+    $request->user()->currentAccessToken()->delete();
+    return response()->json(['message' => 'Logged out']);
+}
 }

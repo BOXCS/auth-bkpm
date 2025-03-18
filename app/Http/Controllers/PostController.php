@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class PostController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('can:update,post')->only('edit', 'update');
+    }
+
     // Menampilkan daftar post
     public function index()
     {
@@ -48,6 +55,9 @@ class PostController extends Controller
     // Menampilkan form untuk mengedit post
     public function edit(Post $post)
     {
+        if (Gate::denies('edit-post', $post)) {
+            abort(403, 'Anda tidak memiliki izin untuk mengedit postingan ini.');
+        }
         return view('posts.edit', compact('post'));
     }
 

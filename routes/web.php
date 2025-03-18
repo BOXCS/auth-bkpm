@@ -40,5 +40,8 @@ Route::get('/dashboard', function () {
 
 Route::resource('posts', PostController::class)->middleware('auth');
 
+Route::get('/post/{post}/edit', [PostController::class, 'edit']) 
+->middleware('can:update,post');
+
 // Route untuk logout
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
