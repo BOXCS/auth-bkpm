@@ -15,6 +15,7 @@ class CreatePostsTable extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Relasi ke tabel users
             $table->timestamps(); // created_at dan updated_at
         });
+        
     }
 
     public function down()
