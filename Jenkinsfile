@@ -1,19 +1,22 @@
 node {
 
-    stage("Checkout") {
+    stage('Checkout') {
         checkout scm
     }
 
-    stage("Install Dependency") {
-        docker.image('shippingdocker/php-composer:8.2').inside() {
-            sh 'composer install --no-interaction --prefer-dist'
+    stage('Install Dependency') {
+        docker.image('composer:2').inside() {
+            sh '''
+                composer install \
+                --no-interaction \
+                --prefer-dist \
+                --no-progress
+            '''
         }
     }
 
-    stage("Test") {
-        docker.image('ubuntu').inside() {
-            sh 'echo "Ini adalah test"'
-        }
+    stage('Test') {
+        sh 'echo "Ini adalah test"'
     }
 
 }
