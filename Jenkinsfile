@@ -3,7 +3,7 @@ node {
 
 
     stage('Build') {
-        docker.image('composer:latest').inside('--network jenkins -u root') {
+        docker.image('composer:2.7').inside('--network jenkins -u root') {
             sh 'rm -f composer.lock'
             sh 'composer install --ignore-platform-reqs'
         }
