@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 3,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1773205211974,
@@ -20,6 +20,10 @@
                 {
                     "date": 1773206117268,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,9 +4,9 @@\n         checkout scm\r\n     }\r\n \r\n     stage('Install Dependency') {\r\n-        docker.image('composer:2').inside() {\r\n+        docker.image('composer:2.7').inside() {\r\n             sh '''\r\n                 composer install \\\r\n                 --no-interaction \\\r\n                 --prefer-dist \\\r\n@@ -15,8 +15,8 @@\n         }\r\n     }\r\n \r\n     stage('Test') {\r\n-        sh 'echo \"Ini adalah test\"'\r\n+        sh 'echo \"Running tests...\"'\r\n     }\r\n \r\n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1773211666346,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,22 +1,32 @@\n node {\r\n+    checkout scm\r\n \r\n-    stage('Checkout') {\r\n-        checkout scm\r\n-    }\r\n \r\n-    stage('Install Dependency') {\r\n-        docker.image('composer:2.7').inside() {\r\n-            sh '''\r\n-                composer install \\\r\n-                --no-interaction \\\r\n-                --prefer-dist \\\r\n-                --no-progress\r\n-            '''\r\n+    stage('Build') {\r\n+        docker.image('composer:latest').inside('--network jenkins -u root') {\r\n+            sh 'rm -f composer.lock'\r\n+            sh 'composer install --ignore-platform-reqs'\r\n         }\r\n     }\r\n \r\n\\ No newline at end of file\n+\r\n     stage('Test') {\r\n-        sh 'echo \"Running tests...\"'\r\n+        docker.image('ubuntu').inside('--network jenkins -u root') {\r\n+            sh 'echo \"Running tests...\"'\r\n+            // sh 'php artisan test'\r\n+        }\r\n     }\r\n \r\n-}\n+\r\n+    stage('Deploy') {\r\n+        docker.image('agung3wi/alpine-rsync:1.1').inside('--network jenkins -u root') {\r\n+            sshagent(credentials: ['ssh-prod']) {\r\n+                sh 'mkdir -p ~/.ssh'\r\n+                sh 'ssh-keyscan -H \"$PROD_HOST\" > ~/.ssh/known_hosts'\r\n+                sh \"\"\"rsync -rav --delete ./ \\\\\r\n+                    ubuntu@\\$PROD_HOST:/home/ubuntu/prod.kelasdevops.xyz/ \\\\\r\n+                    --exclude=.env --exclude=storage --exclude=.git\"\"\"\r\n+            }\r\n+        }\r\n+    }\r\n+}\r\n"
                 }
             ],
             "date": 1773205211974,
