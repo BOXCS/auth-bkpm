@@ -5,7 +5,7 @@ node {
     }
 
     stage('Install Dependency') {
-        docker.image('composer:2').inside() {
+        docker.image('composer:2.7').inside() {
             sh '''
                 composer install \
                 --no-interaction \
@@ -16,7 +16,7 @@ node {
     }
 
     stage('Test') {
-        sh 'echo "Ini adalah test"'
+        sh 'echo "Running tests..."'
     }
 
 }
