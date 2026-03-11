@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1773205211974,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1773205742638,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,19 +1,19 @@\n node {\r\n \r\n- stage(\"Checkout\") {\r\n-  checkout scm\r\n- }\r\n+    stage(\"Checkout\") {\r\n+        checkout scm\r\n+    }\r\n \r\n- stage(\"Install Dependency\") {\r\n-  docker.image('shippingdocker/php-composer:7.4').inside() {\r\n-   sh 'composer install --no-interaction --prefer-dist'\r\n-  }\r\n- }\r\n+    stage(\"Install Dependency\") {\r\n+        docker.image('shippingdocker/php-composer:8.2').inside() {\r\n+            sh 'composer install --no-interaction --prefer-dist'\r\n+        }\r\n+    }\r\n \r\n- stage(\"Test\") {\r\n-  docker.image('ubuntu').inside() {\r\n-   sh 'echo \"Ini adalah test\"'\r\n-  }\r\n- }\r\n+    stage(\"Test\") {\r\n+        docker.image('ubuntu').inside() {\r\n+            sh 'echo \"Ini adalah test\"'\r\n+        }\r\n+    }\r\n \r\n }\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1773205211974,
